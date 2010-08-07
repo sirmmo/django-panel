@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 class Template(models.Model):
 	owner = models.ForeignKey(User)
@@ -25,7 +26,7 @@ class Block(models.Model):
 class TemplateElement(models.Model):
 	template_key = models.CharField(max_length = 250)
 	block = models.ForeignKey(Block)
-	block_configuration = models.TextField(blank=True)	
+	block_configuration = models.TextField(blank=True, default = "{}")	
 	def __unicode__(self):
 		return self.block.name + " @ " + self.template_key
 	
@@ -34,7 +35,12 @@ class Panel (models.Model):
 	public = models.BooleanField(default= False)
 	name = models.CharField(max_length = 100, unique = True)
 	template = models.ForeignKey(Template)
-	template_configuration = models.TextField()
+	template_configuration = models.TextField(default = "{}")
 	template_elements = models.ManyToManyField(TemplateElement)
 	def __unicode__(self):
 		return self.name
+		
+	@models.permalink
+	def url(self):
+		return ('djpanel.views.panel', [str(self.name)])
+		

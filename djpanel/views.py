@@ -4,7 +4,9 @@ from django.utils import simplejson
 from django.http import HttpResponse
 
 def list(request):
-	pass
+	r = Panel.objects.all()
+	urls = [a.url() for a in r if a.owner == request.user or a.public]
+	return HttpResponse(simplejson.dumps(urls))
 
 def panel(request, panel):
 	from django.template import Context, Template
